@@ -107,7 +107,7 @@ ggplot(data=happydf,aes(x=factor(degree,level=c('NA','LT HIGH SCHOOL','HIGH SCHO
 ```{r,echo=FALSE}
 ggplot(happydf,aes(x=factor(degree,level=c('NA','LT HIGH SCHOOL','HIGH SCHOOL','JUNIOR COLLEGE','BACHELOR','GRADUATE')),fill=happy))+geom_bar(position="fill")+theme(axis.text.x = element_text(angle = 90))+labs(x="Degree Type",y="Count",title="Happiness by Degree Type")
 ggplot(happydf,aes(health,fill=happy))+geom_bar(position="fill")+theme(axis.text.x = element_text(angle = 90))+labs(x="Health Condition",y="Count",title="Happiness by Health")
-ggplot(happydf,aes(x=factor(marital,level=c('NEVER MARRIED','MARRIED','SEPARATED','DIVORCED','WIDOWED')),fill=happy))+geom_bar(position="fill")+theme(axis.text.x = element_text(angle = 90))+labs(x="Sex",y="Count",title="Happiness by Marital Status")
+ggplot(happydf,aes(x=factor(marital,level=c('NEVER MARRIED','MARRIED','SEPARATED','DIVORCED','WIDOWED')),fill=happy))+geom_bar(position="fill")+theme(axis.text.x = element_text(angle = 90))+labs(x="Marital Status",y="Count",title="Happiness by Marital Status")
 ```
 
 
