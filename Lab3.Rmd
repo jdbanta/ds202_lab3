@@ -36,14 +36,14 @@ The General Social Survey (GSS) has been run by NORC every other year since 1972
 An excerpt of the GSS data is available from my github website. 
 When you `git pull` from my github folder, the file [HAPPY.rds](HAPPY.rds) should have also downloaded. Put the file in the same folder as your working directory. You can check your working directory by typing `getwd()` in your R session. The following command is going to load the data into your R session:
 
-```{r,eval=FALSE}
-happy <- readRDS("HAPPY.rds")
+```{r}
+hap <- readRDS(choose.files())
 ```
 
 Let's convert all the names to lowercase - it is easier to work with. Type in: 
 
-```{r,eval=FALSE}
-names(happy) = tolower(names(happy))
+```{r}
+names(hap) = tolower(names(hap))
 ```
 
 Now it's important to understand what each column stands for. You can find a codebook with explanations for each of the variables at https://gssdataexplorer.norc.org/
@@ -54,17 +54,66 @@ Answer each of the following questions using R code to get an answer.
 Write a separate code chunk to manipulate each variable. Once all the data manipulation is done, show the values in a barchart or histogram and comment on the plot. Use `ggplot2` to create the plots.
 
 1. Data cleaning: the values "IAP", "DK" and "NA" all encode missing values. Replace all of these instances by the value `NA`. 
+
+```{r,echo=FALSE}
+library(dplyr)
+happydf<-data.frame(hap)
+happydf<-na_if(happydf,"IAP")
+happydf<-na_if(happydf,"DK")
+happydf<-na_if(happydf,"NA")
+head(happydf)
+```
+
+
 2. Check the type of the variable and cast into the right type (factor variable for categorical variables). For age, change "89 OR OLDER" to 89 and assume the variable should be numeric. (Hint: see `?as.character` and `?as.numeric`)
+
+```{r,echo=FALSE}
+sapply(happydf,class)
+cols<-c("happy","sex","marital","degree","finrela","health","partyid","polviews")
+happydf[cols]<-lapply(happydf[cols], factor)
+sapply(happydf,class)
+happydf$age[happydf$age=="89 OR OLDER"]<-89
+happydf$age=as.numeric(happydf$age)
+sapply(happydf,class)
+```
+
+
 3. Bring all levels of factors into a sensible order. For marital you could e.g. order the levels according to average age. 
+
+```{r,echo=FALSE}
+library(plyr)
+happydf<-arrange(happydf,year,age,sex,marital,degree,finrela,health,partyid,polviews)
+head(happydf)
+```
+
 
 ## Part two (exploration)
 
 *Happiness!*
 Use `ggplot2` to create the plots. Your exploration should make use all elements of the grammar of graphics: mappings (`color`, `fill`, and `size` at least), different `geom`s (4 at least), scales, coordinates (eg `coord_flip`), facet, and theme (eg setting axis labels and title). **The final plot doesn't need to include all these elements, but they should be part of your exploration**. For each investigation, create an appropriate visualization and write a paragraph to describe it.
 
-1. Investigate the distributions of 2 different variables. 
+1. Investigate the distributions of 2 different variables.
+
+```{r,echo=FALSE}
+library(ggplot2)
+ggplot(data=happydf,aes(happydf$happy))+geom_histogram(fill="yellow",stat="count")+labs(x="Happiness Level",y="Count",title="Histogram of happiness levels")+theme(axis.text.x = element_text(angle = 90))
+ggplot(data=happydf,aes(x=factor(degree,level=c('NA','LT HIGH SCHOOL','HIGH SCHOOL','JUNIOR COLLEGE','BACHELOR','GRADUATE'))))+geom_histogram(fill="red",stat="count")+labs(x="Degree Type",y="Count",title="Histogram of Degree")+theme(axis.text.x = element_text(angle = 90))
+```
+
+
+
 2. Investigate the relationship between happiness and three other variables in the data.
+
+```{r,echo=FALSE}
+ggplot(happydf,aes(x=factor(degree,level=c('NA','LT HIGH SCHOOL','HIGH SCHOOL','JUNIOR COLLEGE','BACHELOR','GRADUATE')),fill=happy))+geom_bar(position="fill")+theme(axis.text.x = element_text(angle = 90))+labs(x="Degree Type",y="Count",title="Happiness by Degree Type")
+ggplot(happydf,aes(health,fill=happy))+geom_bar(position="fill")+theme(axis.text.x = element_text(angle = 90))+labs(x="Health Condition",y="Count",title="Happiness by Health")
+ggplot(happydf,aes(x=factor(marital,level=c('NEVER MARRIED','MARRIED','SEPARATED','DIVORCED','WIDOWED')),fill=happy))+geom_bar(position="fill")+theme(axis.text.x = element_text(angle = 90))+labs(x="Sex",y="Count",title="Happiness by Marital Status")
+```
+
+
 3. What do you learn from the data set? Write one or two paragraphs to describe.
+
+
 
 Explore the dataset yourself, and then discuss and refine answers as a team.
 
@@ -74,10 +123,9 @@ Put together everything you've done in Part 1 and 2 into a report (`team.Rmd`). 
 
 ## Submission
 
-1. Push `team.Rmd` and `team.html` to the owner's git repo.
+1. Push `team.Rmd` and `team.html` to the owner's git repo
 
 2. **Submit both `team.Rmd` and `team.html` to Canvas as well**. In your submission, include: 
     - The owner's GitHub username 
     - The partner's GitHub username 
     - Repo name (should be `ds202_lab3`)
-
