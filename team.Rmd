@@ -4,6 +4,12 @@ author: "Kelsey McInturff"
 date: "10/3/2019"
 output: html_document
 ---
+Github repository: https://github.com/jdbanta/ds202_lab3
+
+Owner: John Banta
+
+Partner: Kelsey McInturff
+
 
 ## Background
 
